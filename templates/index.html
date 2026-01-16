@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Sorter</title>
+    <style>
+        body { font-family: Arial; text-align: center; background: #f0f0f0; }
+        #image { max-width: 80%; max-height: 70vh; border: 2px solid #ddd; margin: 20px; }
+        .buttons { margin: 30px; }
+        button {
+            font-size: 3em; width: 120px; height: 120px;
+            border: none; border-radius: 50%; margin: 10px; cursor: pointer;
+        }
+        .like { background: #4CAF50; }     /* ✅ */
+        .dislike { background: #f44336; } /* ❌ */
+        .only_sex { background: #FF9800; } /* 🔥 */
+        .delete { background: #9E9E9E; }   /* 🗑️ */
+        #status { font-size: 1.2em; color: #666; margin: 20px; }
+        #progress { font-size: 1.5em; }
+    </style>
+</head>
+<body>
+    <h1>📸 Сортируй фото</h1>
+    {% if img_url %}
+        <img id="image" src="{{ img_url }}" alt="Photo">
+        <div class="buttons">
+            <button class="like" onclick="sort('like')" title="✅ Like">👍</button>
+            <button class="dislike" onclick="sort('dislike')" title="❌ Dislike">👎</button>
+            <button class="only_sex" onclick="sort('only_sex')" title="🔥 Only Sex">🔥</button>
+            <button class="delete" onclick="sort('delete')" title="🗑️ Delete">🗑️</button>
+        </div>
+    {% else %}
+        <h2>✅ Все фото отсортировано!</h2>
+        <p>Проверь папки: like/, dislike/, only_sex/, delete/</p>
+    {% endif %}
+
+    <div id="status"></div>
+    <div id="progress"></div>
+
+    <script>
+        let current_filename = '';
+
+        function sort(category) {
+            fetch('/sort', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({filename: current_filename, category: category})
+            })
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('status').innerText = data.message;
+                setTimeout(loadNext, 500);
+            });
+        }
+
+        function loadNext() {
+            window.location.reload();
+        }
+
+        {% if img_url %}
+            current_filename = new URL(document.getElementById('image').src).pathname.split('/').pop();
+        {% endif %}
+    </script>
+</body>
+</html>
