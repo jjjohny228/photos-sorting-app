@@ -11,9 +11,6 @@ CATEGORIES = {
     'like': Path("like"), 'dislike': Path("dislike"),
     'only_sex': Path("only_sex"), 'delete': Path("delete")
 }
-photo_index = 0
-
-images = sorted(list(FULL_DIR.glob("*.jpg")) + list(FULL_DIR.glob("*.png")))
 
 # Создать папки
 for cat_dir in CATEGORIES.values():
@@ -67,4 +64,7 @@ def sort_image():
 
 
 if __name__ == '__main__':
+    photo_index = 0
+    images = sorted(list(FULL_DIR.glob("*.jpg")) + list(FULL_DIR.glob("*.png")))
+
     app.run(debug=True, host='0.0.0.0', port=5020)
